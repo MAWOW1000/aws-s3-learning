@@ -16,14 +16,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Copy app files
 COPY . .
 
+# Create .env from example (Render overrides values via env vars)
+RUN cp .env.example .env
+
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Set permissions
 RUN chmod -R 777 storage bootstrap/cache
-
-# Generate app key (will be overridden by APP_KEY env var on Render)
-RUN php artisan key:generate --force
 
 # Expose port (Render sets PORT env var)
 EXPOSE 8000
