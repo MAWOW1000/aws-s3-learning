@@ -150,6 +150,13 @@ class S3Service
                 'min_storage' => '180 days',
                 'best_for' => 'Compliance archives, long-term backups, regulatory data retention.',
             ],
+            'REDUCED_REDUNDANCY' => [
+                'name' => 'S3 Reduced Redundancy Storage',
+                'description' => 'Deprecated. Lower redundancy for reproducible data at reduced cost.',
+                'retrieval' => 'Milliseconds',
+                'min_storage' => 'None',
+                'best_for' => 'Reproducible data, thumbnails, derived content that can be recreated.',
+            ],
             'INTELLIGENT_TIERING' => [
                 'name' => 'S3 Intelligent-Tiering',
                 'description' => 'Automatically moves data between tiers based on access patterns.',

@@ -14,5 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->reportable(function (\Throwable $e) {
+            try {
+                $discord = app(\App\Services\DiscordService::class);
+                $discord->sendErrorNotification('Unhandled Exception', $e);
+            } catch (\Throwable $discordError) {
+                // Silently fail — don't create infinite loop
+            }
+        });
     })->create();

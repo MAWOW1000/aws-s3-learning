@@ -16,6 +16,9 @@ A Laravel web application for hands-on learning of all 7 Amazon S3 storage class
 | **Presigned URL** | Generate a time-limited (5 min) URL to access private objects |
 | **Delete files** | Remove objects from S3 |
 | **Reference panel** | Side-by-side comparison of all 7 storage classes with retrieval time, min storage, and best use case |
+| **S3-down page** | Funny "S3 Cemetery" fallback UI when AWS is unreachable (HTTP 503) |
+| **Health check** | `/health` endpoint for monitoring and keep-alive pings |
+| **Discord alerts** | Error logs sent to Discord webhook (free, no Render log access needed) |
 
 ## S3 Storage Classes Covered
 
@@ -43,8 +46,10 @@ app/
 ├── Http/Controllers/S3Controller.php   # Route handlers
 └── Services/S3Service.php              # AWS S3 SDK wrapper
 resources/views/index.blade.php          # Single-page UI
-routes/web.php                          # 5 routes
+resources/views/s3-down.blade.php        # S3-down fallback UI (cemetery theme)
+routes/web.php                          # 6 routes
 Dockerfile                              # Render deployment
+docker-entrypoint.sh                    # Generates .env from env vars at runtime
 ```
 
 ## Local Setup
@@ -125,6 +130,29 @@ Create an IAM user and attach this policy:
     ]
 }
 ```
+
+## Keep-Alive (Prevent Render Spin-Down)
+
+Render free tier spins down after 15 min of inactivity. Use a **free external ping service** to keep it alive:
+
+1. Sign up at [UptimeRobot](https://uptimerobot.com) (free) or [cron-job.org](https://cron-job.org) (free)
+2. Create a new monitor/job:
+   - **URL:** `https://aws-s3-learning.onrender.com/health`
+   - **Interval:** Every 14 minutes
+3. Done! Your app will stay awake.
+
+## Error Logging (Discord Webhook)
+
+Since Render free plan doesn't show logs, errors are sent to Discord:
+
+1. Create a Discord webhook: Server Settings → Integrations → Webhooks → New Webhook
+2. Copy the webhook URL
+3. Add to Render environment variables: `LOG_DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...`
+4. Redeploy — errors will appear in your Discord channel
+
+## S3-Down Fallback
+
+When AWS S3 is unreachable, the app shows a themed "S3 Storage Cemetery" page (HTTP 503) instead of a generic error. It displays all 7 storage classes as tombstones, with `DEEP_ARCHIVE` marked as "deceased" — because nobody waited 12-48 hours for it.
 
 ## Key Concepts Learned
 
