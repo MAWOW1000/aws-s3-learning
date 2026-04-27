@@ -31,4 +31,3 @@ EXPOSE 8000
 
 # Use entrypoint to generate .env then start Laravel
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=${PORT:-8000}"]

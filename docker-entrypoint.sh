@@ -18,7 +18,14 @@ echo "CACHE_STORE=${CACHE_STORE:-file}" >> /app/.env
 echo "SESSION_DRIVER=${SESSION_DRIVER:-file}" >> /app/.env
 
 # Fix: Render sets WEB_CONCURRENCY as string, causes PHP 8.4 type error in artisan serve
-export WEB_CONCURRENCY=$((WEB_CONCURRENCY + 0))
+if [ -n "$WEB_CONCURRENCY" ]; then
+    export WEB_CONCURRENCY=$((WEB_CONCURRENCY + 0))
+else
+    export WEB_CONCURRENCY=1
+fi
 
-# Execute the command passed as arguments
-exec "$@"
+# Fix: Render sets PORT as string; artisan serve needs a clean integer
+PORT=${PORT:-8000}
+
+# Start Laravel development server
+exec php artisan serve --host=0.0.0.0 --port="$PORT"
