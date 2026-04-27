@@ -1,59 +1,139 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# AWS S3 Storage Class Learning App
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel web application for hands-on learning of all 7 Amazon S3 storage classes. Upload real files to S3, change their storage class, and see the differences in cost, retrieval time, and behavior.
 
-## About Laravel
+**Live Demo:** [https://aws-s3-learning.onrender.com](https://aws-s3-learning.onrender.com)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## What You Can Do
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Feature | Description |
+|---------|-------------|
+| **Upload files** | Choose a file + select any S3 storage class at upload time |
+| **List files** | See all uploaded objects with their current storage class, size, and last modified date |
+| **Change storage class** | Switch any object between all 7 S3 storage classes instantly |
+| **Presigned URL** | Generate a time-limited (5 min) URL to access private objects |
+| **Delete files** | Remove objects from S3 |
+| **Reference panel** | Side-by-side comparison of all 7 storage classes with retrieval time, min storage, and best use case |
 
-## Learning Laravel
+## S3 Storage Classes Covered
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Class | Code | Retrieval | Min Storage | Best For |
+|-------|------|-----------|-------------|----------|
+| S3 Standard | `STANDARD` | Milliseconds | None | Frequently accessed data |
+| S3 Standard-IA | `STANDARD_IA` | Milliseconds | 30 days | Infrequent access, backups |
+| S3 One Zone-IA | `ONEZONE_IA` | Milliseconds | 30 days | Non-critical, re-creatable data |
+| S3 Glacier Instant Retrieval | `GLACIER_IR` | Milliseconds | 90 days | Archives needing immediate access |
+| S3 Glacier Flexible Retrieval | `GLACIER` | Minutes–hours | 90 days | Rarely accessed archives |
+| S3 Glacier Deep Archive | `DEEP_ARCHIVE` | 12–48 hours | 180 days | Long-term compliance retention |
+| S3 Intelligent-Tiering | `INTELLIGENT_TIERING` | Milliseconds | None | Unknown/changing access patterns |
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Tech Stack
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- **Laravel 13** (PHP 8.4)
+- **AWS SDK for PHP** (S3Client)
+- **Bootstrap 5** (UI)
+- **Docker** (deployment)
 
-## Agentic Development
+## Project Structure
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+app/
+├── Http/Controllers/S3Controller.php   # Route handlers
+└── Services/S3Service.php              # AWS S3 SDK wrapper
+resources/views/index.blade.php          # Single-page UI
+routes/web.php                          # 5 routes
+Dockerfile                              # Render deployment
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Local Setup
 
-## Contributing
+### Prerequisites
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- PHP 8.2+
+- Composer
+- AWS account with S3 access
 
-## Code of Conduct
+### Steps
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. **Clone the repo:**
+   ```bash
+   git clone https://github.com/MAWOW1000/aws-s3-learning.git
+   cd aws-s3-learning
+   ```
 
-## Security Vulnerabilities
+2. **Install dependencies:**
+   ```bash
+   composer install
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+3. **Configure AWS credentials** in `.env`:
+   ```env
+   AWS_ACCESS_KEY_ID=your_access_key
+   AWS_SECRET_ACCESS_KEY=your_secret_key
+   AWS_DEFAULT_REGION=ap-southeast-2
+   AWS_BUCKET=your-bucket-name
+   ```
+
+4. **Create an S3 bucket** (if you don't have one):
+   ```bash
+   aws s3 mb s3://your-unique-bucket-name --region ap-southeast-2
+   ```
+
+5. **Run the app:**
+   ```bash
+   php artisan serve
+   ```
+
+6. **Open** [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+## IAM Policy (Minimum Required)
+
+Create an IAM user and attach this policy:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:GetBucketLocation",
+                "s3:ListBucketMultipartUploads",
+                "s3:CreateBucket",
+                "s3:DeleteBucket"
+            ],
+            "Resource": "arn:aws:s3:::*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:DeleteObject",
+                "s3:PutObjectAcl",
+                "s3:PutObjectTagging",
+                "s3:AbortMultipartUpload",
+                "s3:ListMultipartUploadParts"
+            ],
+            "Resource": "arn:aws:s3:::*/*"
+        }
+    ]
+}
+```
+
+## Key Concepts Learned
+
+- **Storage class transitions** — `copyObject` with a new `StorageClass` changes the tier
+- **Versioning** — If enabled, class changes create new versions; if disabled, objects are overwritten
+- **Glacier archival** — Objects in `GLACIER` or `DEEP_ARCHIVE` cannot be accessed until restored
+- **Presigned URLs** — Temporary access to private objects without making the bucket public
+- **Cost tradeoffs** — Cheaper storage = slower retrieval or minimum storage duration charges
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# Render deploy trigger
+This project is open-sourced under the [MIT license](https://opensource.org/licenses/MIT).
