@@ -54,7 +54,7 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            'channels' => explode(',', (string) env('LOG_STACK', 'single')),
+            'channels' => explode(',', (string) env('LOG_STACK', 'single,discord')),
             'ignore_exceptions' => false,
         ],
 
@@ -80,6 +80,19 @@ return [
             'emoji' => env('LOG_SLACK_EMOJI', ':boom:'),
             'level' => env('LOG_LEVEL', 'critical'),
             'replace_placeholders' => true,
+        ],
+
+        'discord' => [
+            'driver' => 'monolog',
+            'level' => env('LOG_LEVEL', 'error'),
+            'handler' => \Monolog\Handler\SlackWebhookHandler::class,
+            'handler_with' => [
+                'url' => env('LOG_DISCORD_WEBHOOK_URL'),
+                'channel' => env('LOG_DISCORD_CHANNEL', ''),
+                'username' => env('LOG_DISCORD_USERNAME', env('APP_NAME', 'Laravel')),
+                'attachment' => true,
+            ],
+            'formatter' => \Monolog\Formatter\LineFormatter::class,
         ],
 
         'papertrail' => [
