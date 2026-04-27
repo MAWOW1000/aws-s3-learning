@@ -73,9 +73,9 @@
                                         <td>{{ $file['last_modified']->format('Y-m-d H:i:s') }}</td>
                                         <td>
                                             <div class="d-flex gap-1 flex-wrap">
-                                                <a href="/file/{{ urlencode($file['key']) }}/url" class="btn btn-sm btn-outline-primary" target="_blank">Presigned URL</a>
+                                                <a href="/file/{{ rawurlencode($file['key']) }}/url" class="btn btn-sm btn-outline-primary" target="_blank">Presigned URL</a>
 
-                                                <form action="/file/{{ urlencode($file['key']) }}/change-class" method="POST" class="d-inline">
+                                                <form action="/file/{{ rawurlencode($file['key']) }}/change-class" method="POST" class="d-inline">
                                                     @csrf
                                                     <div class="input-group input-group-sm">
                                                         <select name="storage_class" class="form-select form-select-sm" style="width: auto;">
@@ -87,7 +87,7 @@
                                                     </div>
                                                 </form>
 
-                                                <form action="/file/{{ urlencode($file['key']) }}/delete" method="POST" class="d-inline" onsubmit="return confirm('Delete this file?');">
+                                                <form action="/file/{{ rawurlencode($file['key']) }}/delete" method="POST" class="d-inline" onsubmit="return confirm('Delete this file?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button class="btn btn-sm btn-outline-danger">Delete</button>

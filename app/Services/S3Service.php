@@ -92,9 +92,12 @@ class S3Service
             'Bucket' => $this->bucket,
             'Key' => $key,
         ]);
+        info('PresignedUrl command - Bucket: ' . $this->bucket . ', Key: ' . $key);
 
         $request = $this->s3Client->createPresignedRequest($cmd, "+{$expiresMinutes} minutes");
-        return (string) $request->getUri();
+        $url = (string) $request->getUri();
+        info('PresignedUrl generated: ' . $url);
+        return $url;
     }
 
     public function getPublicUrl(string $key): string

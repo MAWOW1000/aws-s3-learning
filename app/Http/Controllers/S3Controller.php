@@ -53,6 +53,7 @@ class S3Controller extends Controller
 
     public function delete(Request $request, string $key): RedirectResponse
     {
+        $key = urldecode($key);
         try {
             $this->s3->deleteFile($key);
             return redirect('/')->with('success', 'File deleted successfully.');
@@ -63,6 +64,7 @@ class S3Controller extends Controller
 
     public function changeClass(Request $request, string $key): RedirectResponse
     {
+        $key = urldecode($key);
         $request->validate([
             'storage_class' => 'required|in:STANDARD,STANDARD_IA,ONEZONE_IA,GLACIER_IR,GLACIER,DEEP_ARCHIVE,INTELLIGENT_TIERING',
         ]);
@@ -77,6 +79,7 @@ class S3Controller extends Controller
 
     public function presignedUrl(string $key)
     {
+        $key = urldecode($key);
         try {
             $url = $this->s3->getPresignedUrl($key, 5);
             return redirect($url);
