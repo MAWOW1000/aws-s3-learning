@@ -13,7 +13,12 @@ echo "AWS_USE_PATH_STYLE_ENDPOINT=${AWS_USE_PATH_STYLE_ENDPOINT:-false}" >> /app
 echo "LOG_CHANNEL=${LOG_CHANNEL:-stack}" >> /app/.env
 echo "LOG_STACK=${LOG_STACK:-single}" >> /app/.env
 echo "LOG_LEVEL=${LOG_LEVEL:-error}" >> /app/.env
-echo "LOG_DISCORD_WEBHOOK_URL=${LOG_DISCORD_WEBHOOK_URL}" >> /app/.env
+echo "DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}" >> /app/.env
+echo "CACHE_STORE=${CACHE_STORE:-file}" >> /app/.env
+echo "SESSION_DRIVER=${SESSION_DRIVER:-file}" >> /app/.env
+
+# Fix: Render sets WEB_CONCURRENCY as string, causes PHP 8.4 type error in artisan serve
+export WEB_CONCURRENCY=$((WEB_CONCURRENCY + 0))
 
 # Execute the command passed as arguments
 exec "$@"
